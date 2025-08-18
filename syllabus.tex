@@ -37,6 +37,8 @@
 \vspace{0.5in}{\fontsize{20}{14}\selectfont\textsf{\smallcaps{\@date}}\par}
 \vspace{0.25in}{\fontsize{20}{14}\selectfont\textsf{\smallcaps{Mon/Wed 04:20 PM 05:40 PM}}\par}
 
+\vspace{0.25in}{\fontsize{20}{14}\selectfont\textsf{\smallcaps{Location: ENG 239}}\par}
+
 \vspace{0.25in}{\fontsize{15}{14}\selectfont\url{https://uah.instructure.com/courses/83520}\par}
 
 
@@ -69,11 +71,11 @@
 \makeatletter
 % Redefine chapter to prevent empty pages
 \renewcommand{\chapter}{%
-  \clearpage% Use clearpage instead of cleardoublepage
-  \thispagestyle{plain}%
-  \global\@topnum\z@
-  \@afterindentfalse
-  \secdef\@chapter\@schapter
+    \clearpage% Use clearpage instead of cleardoublepage
+    \thispagestyle{plain}%
+    \global\@topnum\z@
+    \@afterindentfalse
+    \secdef\@chapter\@schapter
 }
 
 % Alternative approach - modify the openright behavior

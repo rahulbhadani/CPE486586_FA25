@@ -127,7 +127,7 @@ apple/.pic={
       M/W 4:20 PM - 5:40 PM \\
       \vspace{0.3cm}
       \textbf{Location:} \\
-      TBD \\
+      ENG 239 \\
       
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -979,136 +979,6 @@ A necessary first step: set up an evaluation criteria
     \item<4-> {\bf\color{MediumBlue}Probability and Statistics}: We need a way to capture uncertainty in our data and models. Probability theory provides us a way to capture and harness uncertainty. 
     \item<5-> {\bf\color{MediumBlue}Coding/Software}: Not only are you going to be talk the talk in machine learning, but with software you're going to be able to walk the walk.
 \end{itemize}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{sectionframe}{\faCoffee}{Setting Up \\Development Environment}
-\end{sectionframe}
-
-\begin{frame}{Clound-based Solution}
-  \begin{center}
-    Google Colab
-
-    \url{https://colab.research.google.com/}
-    \begin{itemize}
-      \item No local setup needed. 
-      \item Packages can be installed as needed.
-      \item GPU can be bought if needed.
-    \end{itemize}
-  \end{center}
-\end{frame}
-
-
-\begin{frame}{Setting Python Virtual Environment using Anaconda}
-  \begin{center}
-    \includegraphics[width=0.4\linewidth]{figures/Anaconda_Logo.png}\\
-
-    Download: \url{https://www.anaconda.com/download/success}
-  \end{center}
- 
-\end{frame}
-
-\begin{frame}[containsverbatim]{Creating Virtual Environment in Python using Anaconda}
-  \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize, bgcolor=blizzardblue]{python}
-    conda create --name pythonenv python=3.11
-    conda activate pythonenv
-    \end{minted}
-\end{frame}
-
-\begin{frame}[containsverbatim]{Installing Jupyter Kernel in Your Anaconda Environment}
-  The following code snippet install python kernel for use with Jupyter Notebook within your Anaconda virtual environment.
-
-  \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize, bgcolor=blizzardblue]{python}
-    conda install ipykernel
-    ipython kernel install --user --name=pythonenv
-    conda install jupyter
-    jupyter notebook
-    \end{minted}
-\end{frame}
-
-
-\begin{frame}[containsverbatim]{Setting up Package Manager using UV}
-UV is a package management written in Rust and for any local development and coding, we will use that.
-
-\begin{gradblock}{Installation}
-
-\begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{shell}
-curl -LsSf https://astral.sh/uv/install.sh | sh
-\end{minted}
-
-\end{gradblock}
-
-Documentation for UV: \url{https://docs.astral.sh/uv/}
-
-
-\begin{gradblock}{Installing Python}
-  \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{python}
-  uv python install 3.12
-  \end{minted}
-
-  Note: When Python is installed by uv, it will not be available globally (i.e. via the \texttt{python} command).
-
-\end{gradblock}
-
-\end{frame}
-
-\begin{frame}[containsverbatim]{Creating Python Virtual Environment}
-  The following will create a new virtual environment and download a managed Python version if Python is not found:
-
-  \begin{texample}
-
-    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{python}
-    uv venv
-    \end{minted}
-  \end{texample}
-\end{frame}
-
-
-\begin{frame}[containsverbatim]{Running Python Scripts}
-  
-  Running scripts without dependencies
-  
-  \begin{gradblock}{example.py}
-
-    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{python}
-    print("Hello world")
-    \end{minted}  
-  
-  \end{gradblock}
-
-  \begin{texample}
-
-    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{shell}
-    uv run example.py
-    \end{minted}  
-  
-  \end{texample}
-
-\end{frame}
-
-
-\begin{frame}[containsverbatim]{Running Python Scripts}
-  
-  Running scripts with dependencies
-  
-  \begin{gradblock}{example.py}
-
-    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{python}
-import time
-from rich.progress import track
-for i in track(range(20), description="For example:"):
-    time.sleep(0.05)
-    \end{minted}  
-  \end{gradblock}
-
-  \begin{texample}
-
-    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize]{shell}
-      uv run --with rich example.py
-    \end{minted}  
-  
-  \end{texample}
-
 \end{frame}
 
 
