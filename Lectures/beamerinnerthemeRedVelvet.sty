@@ -667,3 +667,26 @@ drop fuzzy shadow,
     urlcolor=fernGreen,
     linkcolor=cpeyellow,
 }
+
+% Customize table of contents text color (sage green for all entries)
+\setbeamercolor{section in toc}{fg=sageGreen}
+\setbeamercolor{subsection in toc}{fg=sageGreen}
+\setbeamercolor{subsubsection in toc}{fg=sageGreen}
+
+% Optional: Use numbered sections and subsections
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+
+% Custom command to wrap table of contents with background using colorbox
+\newcommand{\backgroundtableofcontents}{%
+  \colorbox{softMint}{%
+    \begin{minipage}{\dimexpr\textwidth-2\fboxsep}%
+      \vspace{0.5em}%
+      \tableofcontents%
+      \vspace{0.5em}%
+    \end{minipage}%
+  }%
+}
+
+\usepackage{tikzsymbols}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}

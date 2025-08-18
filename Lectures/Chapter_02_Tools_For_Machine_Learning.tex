@@ -1019,22 +1019,230 @@ source .venv/bin/activate
     
 \end{frame}
 
-\section{Markdown}
 
-\begin{frame}
-    \sectionpage
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
+
+Let's look at the structure of the package:
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\textbar{}-- Cargo.toml
+\textbar{}-- pyproject.toml
+\textbar{}-- README.md
+\textbackslash{}\textbar{}-- src
+    \textbar{}-- lib.rs
+    \textbackslash{}\textbar{}-- myawesomepackage
+        \textbar{}-- \_core.pyi
+        \textbar{}-- \_\_init\_\_.py
+        \textbar{}-- py.typed
+\end{Verbatim}
+
+Inside \texttt{src/myawesomepackage} create a folder called \texttt{arithmetic}.
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+mkdir arithmetic
+cd arithmetic
+\end{minted}
 \end{frame}
 
-\section{Latex}
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
 
-\begin{frame}
-    \sectionpage
+Now we will create a module in \texttt{arithmetic} subpackage.
+
+\begin{tblock}{Module}
+    A module is a file containing Python definitions and statements. A module can contain executable statements as well as function definitions. Read more at \url{https://docs.python.org/3/tutorial/modules.html}
+\end{tblock}
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+    touch __init__.py # a subpackage must contain __init__.py
+    code series.py
+\end{minted}
+
+and enter the following code by copying from \url{https://gist.github.com/rahulbhadani/a95e5f57bd7bb906755f443a91d7b0c2}
+
+
+
 \end{frame}
+
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
+
+Add the following code to \mintinline{text}|__init__.py|.
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+"""
+Arithmetic subpackage containing mathematical progression functions.
+"""
+
+from .series import arithmetic_progression, arithmetic_sum
+
+__all__ = ['arithmetic_progression', 'arithmetic_sum']
+
+    \end{minted}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
+
+    \footnotesize
+
+Now, we build the package. Change the directory to the root directory of your \texttt{myawesomepackage}, and type 
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+uv build
+\end{minted}
+    
+This will generate a .whl file and a .tar.gz file in \texttt{dist/} folder. You can upload this to GitHub release to be installed later.
+
+Alternatively, you can upload PYPI. You will need to create an account on PYPI and note down your secret code. However, to upload on PYPI, your package need to have a unique name. When you upload on PYPI, you can install from PYPI directly using \mintinline{text}{uv add packagename} or \mintinline{text}{uv pip install packagename}
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+uv add twine
+twine upload dist/*
+\end{minted}
+
+\begin{tblock}{Note:}
+    You may need to rename your .whl file so that it ends in \mintinline{text}{...cp39-abi3-manylinux_2_28_x86_64.whl}
+    
+\end{tblock}
+
+
+\end{frame}
+
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
+
+    \textbf{Installing the package}
+
+    Let's install package in another UV environment. Open a new terminal, and type
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\tiny]{bash}
+uv init arithmetic_test
+cd arithmetic_test
+uv venv --python 3.12
+source .venv/bin/activate
+uv add https://github.com/rahulbhadani/CPE486586_FA25/releases/download/0.1/myawesomepackage-0.1.0-cp39-abi3-linux_x86_64.whl
+\end{minted}
+
+If you uploaded your package to PYPI, you can install using 
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+uv add myawesomepackage 
+\end{minted}
+
+or 
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+uv pip install myawesomepackage 
+\end{minted}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Using Installed Package with UV}
+    
+    We will demonstrate how to use Install Package in UV jusing Jupyter and VS Code. Navigate to the project folder you created and activate the virtual environment:
+
+    \begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+cd arithmetic_test
+source .venv/bin/activate
+uv add --dev jupyter
+uv add --dev ipykernel
+# create a kernel for jupyter
+uv run ipython kernel install --user --env VIRTUAL_ENV $(pwd)/.venv --name=arithmetic_test
+
+# Launch Jupyter Notebook
+jupyter notebook
+
+\end{minted}
+
+It will launch the Jupyter Notebook in your browser. There you can create a new .ipynb file select kernel as \textbf{arithmetic\_test} as it is the name we gave to the kernel above.
+
+
+    
+\end{frame}
+
+\begin{frame}[containsverbatim]{Using Installed Package with UV}
+
+    Now, in the notebook, add the following code and execute
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+# Option 1: Import the function directly
+from myawesomepackage.arithmetic.series import arithmetic_progression
+term_10 = arithmetic_progression(5, 2, 10)
+term_10
+
+# Option 2: Import from the subpackage (due to \_\_init\_\_.py)
+from myawesomepackage.arithmetic import arithmetic_progression
+
+# Option 3: Import the module
+from myawesomepackage.arithmetic import series
+result = series.arithmetic_progression(5, 2, 10)
+result
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Setting Python Virtual Environment using Anaconda}
+
+    Alternatively, we can use Anaconda instead of UV for virtual environment as well, however, I recommend using UV for this course.
+
+    \begin{center}
+        \includegraphics[width=0.4\linewidth]{figures/Anaconda_Logo.png}\\
+
+        Download: \url{https://www.anaconda.com/download/success}
+    \end{center}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]{Creating Virtual Environment in Python using Anaconda}
+    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize, bgcolor=powderGreen]{python}
+    conda create --name pythonenv python=3.11
+    conda activate pythonenv
+    \end{minted}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Installing Jupyter Kernel in Your Anaconda Environment}
+    The following code snippet install python kernel for use with Jupyter Notebook within your Anaconda virtual environment.
+
+    \begin{minted}[framesep=1mm, baselinestretch=1.2, fontsize=\normalsize, bgcolor=powderGreen]{python}
+    conda install ipykernel
+    ipython kernel install --user --name=pythonenv
+    conda install jupyter
+    jupyter notebook
+    \end{minted}
+\end{frame}
+
+\begin{frame}{Clound-based Solution}
+    \begin{center}
+    Google Colab
+
+    \url{https://colab.research.google.com/}
+    \begin{itemize}
+        \item No local setup needed. 
+        \item Packages can be installed as needed.
+        \item GPU can be bought if needed.
+    \end{itemize}
+    \end{center}
+\end{frame}
+
 
 \section{Other Notable Tools}
 
 \begin{frame}
     \sectionpage
+\end{frame}
+
+
+\begin{frame}{Tools helpful for Machine Learning and Data Science}
+
+    \begin{columns}
+        \column{0.5\linewidth}
+        \begin{enumerate}
+            \item R Language and R Studio
+            \item Julia Programming Language
+            \item Tableau
+            \item Power BI
+            \item Structured Query Language (SQL)
+            \item Statistical Analysis System (SAS)
+        \end{enumerate}
+    \end{columns}
+    
 \end{frame}
 
 \begin{frame}
