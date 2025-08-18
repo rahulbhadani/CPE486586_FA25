@@ -945,13 +945,13 @@ uv run main.py
 
     \texttt{uvx} launches a tool in a temporary environment without installing it:
     \begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
-uvx pycowsa "Hello !"
+uvx pycowsay "Hello !"
     \end{minted}
 
     \bigskip
     \texttt{uv tool} allows to install the tool in its own environment and make its binary available in the PATH:
     \begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
-uv tool add pycowsay
+uv tool install pycowsay
 pycowsay "Hello !"
     \end{minted}
 
@@ -1000,6 +1000,23 @@ AR=/usr/bin/ar uv tool install snakemake
 uv tool install ansible-core --with ansible
     \end{minted}
 
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Creating and Installing a Package with UV}
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+# Create a uv project
+uv init --lib --package myawesomepackage --build-backend maturin --author-from git
+cd myawesomepackage
+# install python
+uv python install 3.12
+# create a virtual environment
+uv venv --python 3.12
+# activate virtual environment
+source .venv/bin/activate
+    \end{minted}
+    
 \end{frame}
 
 \section{Markdown}
