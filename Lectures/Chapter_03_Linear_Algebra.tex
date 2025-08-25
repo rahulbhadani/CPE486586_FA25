@@ -1499,10 +1499,78 @@ In Matrix form, we could write it as
 
 \begin{frame}{Matrix Inverse}
 
-    \begin{multiequation}
+
+    \begin{columns}
+        \column{0.5\linewidth}
+        \begin{tblock}{}
+        \begin{multiequation}
         X = A^{-1}B
     \end{multiequation}
+    \end{tblock}
+
+    \column{0.5\linewidth}
+        Inverse can be calculated as
+
+            \begin{tblock}{}
+        \begin{multiequation}
+        A^{-1} = \cfrac{1}{|A|}Adj A
+    \end{multiequation}
+    \end{tblock}
+    where $|A|$ is the determininant of the matrix.
+
+    \bigskip
+
+    $Adj(A)$ is the adjoint of a matrix $A$ (not the same as a adjoint Matrix. $adj(A)$ is also called adjugate matrix.
+
+
+    \end{columns}    
+\end{frame}
+
+\begin{frame}{Example}
+
+    Consider $ A = \begin{bmatrix}
+        -2 & 5 & 1\\
+        4 & 1 & 0\\
+        -3 & 5 & 5
+    \end{bmatrix}$. $Adj(A)$ can be written as $Adj(A) = \begin{bmatrix}
+        C_{11} & C_{2} & C_{31}\\
+        C_{12} & C_{22} & C_{23}\\
+        C_{13} & C_{23} & C_{33}
+    \end{bmatrix}$. $C_{ij}$ are called cofactors.
+
+    \bigskip
+
+    $C_{11} = + \bigg|  \begin{bmatrix}
+        1 & 0 \\
+        5 & 5
+    \end{bmatrix} \bigg| = 5 - 0 = 5$, ~~~ $C_{12} = - \bigg|  \begin{bmatrix}
+        4 & 0 \\
+        -3 & 5
+    \end{bmatrix} \bigg| = -(20 - 0 ) = -20$, $C_{13} = + \bigg|  \begin{bmatrix}
+        4 & 1 \\
+        -3 & 5
+    \end{bmatrix} \bigg| = 20 + 3  = 23$. Similarly, you can calculate for $C_{ij}$. \bigskip This way, $Adj(A) = \begin{bmatrix}
+        5 & -20 & -1\\-20 & -7 & 4\\23 & -5 & -22
+    \end{bmatrix}$
     
+\end{frame}
+
+\begin{frame}{General Formula for Solving Systems of Linear Equations by Inverse}
+    \begin{enumerate}
+        \item First, calculate the cofactors $C_{ij} = (-1)^{i+j} M_{ij}$ where $M_{ij}$ is the determininant of $(n-1) \times (n-1)$ matrix resulting from deleting row $i$ and column $j$ of $A$.
+        \item Divide cofactor matrix by $det(A) = |A|$.
+    \end{enumerate}
+
+    \begin{multiequation}
+        AX & = B\\
+        A^{-1}A X & = A^{-1}B\\
+        IX & = A^{-1}B\\
+        X & = A^{-1}B
+    \end{multiequation}
+
+    \begin{block}{}
+        \faExclamationTriangle~~~Computing $Adj(A)$ for a high-dimensional matrix is computationally expensive. We need better methods.
+    \end{block}
 \end{frame}
 
 \begin{frame}
