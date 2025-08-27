@@ -24,6 +24,7 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{tikz,pgfplots}
+
 \usepackage{subfigure}
 \usetikzlibrary{arrows}
 \usepackage{minted}
@@ -34,6 +35,7 @@
 
 \usepackage{xcolor-material}
 \usetikzlibrary{fit}
+\usetikzlibrary{matrix}
 \tikzset{%
 apple/.pic={
   \fill [MaterialBrown] (-1/8,0)  arc (180:120:1 and 3/2) coordinate [pos=3/5] (@)-- ++(1/6,-1/7)  arc (120:180:5/4 and 3/2) -- cycle;
@@ -1450,7 +1452,7 @@ print("Rank of A = ", np.linalg.matrix_rank(A))
     \footnotesize
     Let's look at the systems of linear equations again.
     \begin{tblock}{}   
-\begin{multiequation}\label{eq:syslinearcomb}
+\begin{multiequation}\label{eq:syslinearcomb2}
     a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n & = b_1\\
     a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n & = b_2\\
     \vdots\\
@@ -1571,7 +1573,652 @@ In Matrix form, we could write it as
     \begin{block}{}
         \faExclamationTriangle~~~Computing $Adj(A)$ for a high-dimensional matrix is computationally expensive. We need better methods.
     \end{block}
+
+    We use Gaussian elimination method for solving large matrices. For that we need to understand Row Echelon Form, and elementary operations.
 \end{frame}
+
+\begin{frame}{What is Row Echelon Form?}
+
+\begin{block}{}
+    \centering
+    A matrix is in \alert{Row Echelon Form (REF)} if it satisfies these rules:
+\end{block}
+
+\vspace{5mm}
+\begin{enumerate}
+    \item \textbf{Leading Entry Rule:} Any non-zero row has a leading \alert{\textbf{1}} (pivot)
+    \item \textbf{Staircase Rule:} Each pivot is \alert{right} of the one above
+    \item \textbf{Zero Rule:} All-zero rows are at the \alert{bottom}
+\end{enumerate}
+
+\centering
+
+\vspace{5mm}
+$\begin{bmatrix}
+\alert{\mathbf{1}} & 2 & 3 & 4 \\
+0 & \alert{\mathbf{1}} & 5 & 6 \\
+0 & 0 & 0 & \alert{\mathbf{1}} \\
+\end{bmatrix}$
+\hspace{10mm}
+$\begin{bmatrix}
+\alert{\mathbf{1}} & 2 & 3 \\
+0 & 0 & \alert{\mathbf{1}} \\
+0 & 0 & 0 \\
+\end{bmatrix}$
+\end{frame}
+
+\begin{frame}{Elementary Row Operations}
+\centering
+We use these operations to achieve REF:
+
+\vspace{5mm}
+\begin{tabular}{lll}
+\toprule
+\textbf{Operation} & \textbf{Notation} & \textbf{Effect} \\
+\midrule
+Row Swap & $R_i \leftrightarrow R_j$ & Swap two rows \\
+Scaling & $kR_i$ & Multiply row by non-zero $k$ \\
+Replacement & $R_i + kR_j$ & Add multiple of one row to another \\
+\bottomrule
+\end{tabular}
+
+\vspace{8mm}
+\alert{Key Property:} These operations do \textbf{not} change the solution set of the system!
+\end{frame}
+
+\begin{frame}{Step-by-Step Example: Starting Matrix}
+\centering
+Let's transform this matrix into REF:
+
+$$
+A = \begin{bmatrix}
+0 & 3 & -6 & 6 & 4 \\
+3 & -7 & 8 & -5 & 8 \\
+3 & -9 & 12 & -9 & 6 \\
+\end{bmatrix}
+$$
+
+\vspace{5mm}
+\begin{tikzpicture}
+\node[draw=red, rounded corners, thick] {Step 1: Get pivot in position (1,1)};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Step 1: Create First Pivot}
+\centering
+Swap Rows 1 and 2, then scale new Row 1:
+
+\vspace{3mm}
+$R_1 \leftrightarrow R_2$ then $\frac{1}{3}R_1$
+
+
+\vspace{3mm}
+$$
+\rightarrow \begin{bmatrix}
+\alert{\mathbf{1}} & -\frac{7}{3} & \frac{8}{3} & -\frac{5}{3} & \frac{8}{3} \\
+0 & 3 & -6 & 6 & 4 \\
+3 & -9 & 12 & -9 & 6 \\
+\end{bmatrix}
+$$
+\end{frame}
+
+
+\begin{frame}{Step 2: Create Zeros Below Pivot}
+\centering
+Eliminate the 3 in position (3,1):
+
+\vspace{3mm}
+$-3R_1 + R_3$
+
+\vspace{3mm}
+$$
+\rightarrow \begin{bmatrix}
+\alert{\mathbf{1}} & -\frac{7}{3} & \frac{8}{3} & -\frac{5}{3} & \frac{8}{3} \\
+0 & 3 & -6 & 6 & 4 \\
+\alert{\mathbf{0}} & -2 & 4 & -4 & -2 \\
+\end{bmatrix}
+$$
+\end{frame}
+
+\begin{frame}{Step 3: Create Second Pivot}
+\centering
+Scale Row 2 to create pivot:
+
+\vspace{3mm}
+$\frac{1}{3}R_2$
+
+\vspace{3mm}
+$$
+\rightarrow \begin{bmatrix}
+\alert{\mathbf{1}} & -\frac{7}{3} & \frac{8}{3} & -\frac{5}{3} & \frac{8}{3} \\
+0 & \alert{\mathbf{1}} & -2 & 2 & \frac{4}{3} \\
+0 & -2 & 4 & -4 & -2 \\
+\end{bmatrix}
+$$
+\end{frame}
+
+\begin{frame}{Step 4: Create More Zeros}
+\centering
+Eliminate below second pivot:
+
+\vspace{3mm}
+$2R_2 + R_3$
+
+\vspace{3mm}
+$$
+\rightarrow \begin{bmatrix}
+\alert{\mathbf{1}} & -\frac{7}{3} & \frac{8}{3} & -\frac{5}{3} & \frac{8}{3} \\
+0 & \alert{\mathbf{1}} & -2 & 2 & \frac{4}{3} \\
+0 & \alert{\mathbf{0}} & 0 & 0 & \frac{2}{3} \\
+\end{bmatrix}
+$$
+\end{frame}
+
+\begin{frame}{Step 5: Final REF Form}
+\centering
+Scale Row 3 for final pivot:
+
+\vspace{3mm}
+$\frac{3}{2}R_3$
+
+\vspace{3mm}
+$$
+A_{\text{REF}} = \begin{bmatrix}
+\alert{\mathbf{1}} & -\frac{7}{3} & \frac{8}{3} & -\frac{5}{3} & \frac{8}{3} \\
+0 & \alert{\mathbf{1}} & -2 & 2 & \frac{4}{3} \\
+0 & 0 & 0 & 0 & \alert{\mathbf{1}} \\
+\end{bmatrix}
+$$
+
+\vspace{3mm}
+\alert{Success!} Matrix is now in Row Echelon Form.
+\end{frame}
+
+
+\begin{frame}{Calculating Matrix Inverse}
+
+    
+To find the inverse $A^{-1}$ of a matrix $A$, we need to solve:
+$$
+A X = I_n
+$$
+for the unknown matrix $X$, which will be $A^{-1}$.
+
+\vspace{5mm}
+We can set this up as an \alert{Augmented Matrix}:
+$$
+\left[A \mid I_n \right]
+$$
+
+\vspace{3mm}
+\begin{tikzpicture}
+\node[draw=red, rounded corners, thick, fill=red!10] {Goal: Use row operations to transform this into $\left[I_n \mid A^{-1} \right]$};
+\end{tikzpicture}
+
+\vspace{3mm}
+The process is Gaussian Elimination (also called Gauss-Jordan Elimination), and we perform the operations on the entire augmented matrix.
+\end{frame}
+
+\begin{frame}{Reduced Row Echelon Form}
+An equation system is in reduced REF if
+    \begin{enumerate}
+        \item It is in REF.
+        \item Every pivot is 1.
+        \item The pivot is the only non-zero entry in its column.
+    \end{enumerate}
+
+    \alert{Example:}
+
+    \centering
+    $$
+    A = \begin{bmatrix}
+        1 & 3 & 0 & 0 & 3\\
+        0 & 0 & 1 & 0 & 9\\
+        0 & 0 & 0 & 1 & -4
+    \end{bmatrix}
+    $$
+    
+\end{frame}
+
+\begin{frame}{Example: Matrix $A$ and Its Augmented Matrix}
+    \footnotesize
+\centering
+$$
+A = \begin{bmatrix}
+1 & 0 & 2 & 0 \\
+1 & 1 & 0 & 0 \\
+1 & 2 & 0 & 1 \\
+1 & 1 & 1 & 1 \\
+\end{bmatrix}
+$$
+
+\vspace{3mm}
+We form the augmented matrix $[A | I_4]$:
+
+$$
+\left[\begin{array}{cccc|cccc}
+1 & 0 & 2 & 0 & 1 & 0 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+1 & 2 & 0 & 1 & 0 & 0 & 1 & 0 \\
+1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+Our goal is to turn the left side into $I_4$. The right side will then become $A^{-1}$. We need to use eleme matrix operation to convert left side to reduce REF.
+\end{frame}
+
+
+\begin{frame}{Step 1: Establish the First Pivot}
+    \footnotesize
+
+\centering
+Pivot position (1,1) is already \alert{1}. Now, we create zeros below it.
+
+\vspace{3mm}
+Operations:
+\begin{align*}
+R_2 &= R_2 - R_1 \\
+R_3 &= R_3 - R_1 \\
+R_4 &= R_4 - R_1
+\end{align*}
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{cccc|cccc}
+1 & 0 & 2 & 0 & 1 & 0 & 0 & 0 \\
+0 & 1 & -2 & 0 & -1 & 1 & 0 & 0 \\
+0 & 2 & -2 & 1 & -1 & 0 & 1 & 0 \\
+0 & 1 & -1 & 1 & -1 & 0 & 0 & 1 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivot: position (1,1) = 1} \\
+\colorbox{blue!20}{Zeros created below pivot in column 1}
+\end{frame}
+
+
+\begin{frame}{Step 2: Establish the Second Pivot}
+    \footnotesize
+\centering
+Pivot position (2,2) is already \alert{1}. Create zeros above and below it.
+
+\vspace{3mm}
+Operations:
+\begin{align*}
+R_3 &= R_3 - 2R_2 \\
+R_4 &= R_4 - R_2
+\end{align*}
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{cccc|cccc}
+1 & 0 & 2 & 0 & 1 & 0 & 0 & 0 \\
+0 & 1 & -2 & 0 & -1 & 1 & 0 & 0 \\
+0 & 0 & 2 & 1 & 1 & -2 & 1 & 0 \\
+0 & 0 & 1 & 1 & 0 & -1 & 0 & 1 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivots: positions (1,1) = 1 and (2,2) = 1} \\
+\colorbox{blue!20}{Zeros created below pivot in column 2}
+\end{frame}
+
+\begin{frame}{Step 3: Establish the Third Pivot}
+        \footnotesize
+\centering
+Pivot position (3,3) is \alert{2}. Scale Row 3 to make it \alert{1}.
+
+\vspace{3mm}
+Operation:
+$$
+R_3 = \frac{1}{2} R_3
+$$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{cccc|cccc}
+1 & 0 & 2 & 0 & 1 & 0 & 0 & 0 \\
+0 & 1 & -2 & 0 & -1 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0.5 & 0.5 & -1 & 0.5 & 0 \\
+0 & 0 & 1 & 1 & 0 & -1 & 0 & 1 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+Now create zeros above and below the new pivot.
+\vspace{3mm}
+Operations:
+\begin{align*}
+R_1 &= R_1 - 2R_3 \\
+R_2 &= R_2 + 2R_3 \\
+R_4 &= R_4 - R_3
+\end{align*}
+\end{frame}
+
+\begin{frame}{Step 3 (Cont'd): Results after Eliminations}
+            \footnotesize
+\centering
+$$
+\rightarrow \left[\begin{array}{cccc|cccc}
+1 & 0 & 0 & -1 & 0 & 2 & -1 & 0 \\
+0 & 1 & 0 & 1 & 0 & -1 & 1 & 0 \\
+0 & 0 & 1 & 0.5 & 0.5 & -1 & 0.5 & 0 \\
+0 & 0 & 0 & 0.5 & -0.5 & 0 & -0.5 & 1 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivots: positions (1,1), (2,2), (3,3) = 1} \\
+\colorbox{blue!20}{Zero created below pivot in column 3}
+\end{frame}
+
+\begin{frame}{Step 4: Establish the Fourth Pivot}
+            \footnotesize
+\centering
+Pivot position (4,4) is \alert{0.5}. Scale Row 4 to make it \alert{1}.
+
+\vspace{3mm}
+Operation:
+$$
+R_4 = 2 R_4
+$$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{cccc|cccc}
+1 & 0 & 0 & -1 & 0 & 2 & -1 & 0 \\
+0 & 1 & 0 & 1 & 0 & -1 & 1 & 0 \\
+0 & 0 & 1 & 0.5 & 0.5 & -1 & 0.5 & 0 \\
+0 & 0 & 0 & 1 & -1 & 0 & -1 & 2 \\
+\end{array}\right]
+$$
+
+\vspace{3mm}
+Now create zeros above the new pivot.
+\vspace{3mm}
+Operations:
+\begin{align*}
+R_1 &= R_1 + R_4 \\
+R_2 &= R_2 - R_4 \\
+R_3 &= R_3 - 0.5R_4
+\end{align*}
+\end{frame}
+
+\begin{frame}{Step 4 (Cont'd): The Final Result - Reduced Row Echelon Form}
+\centering
+After performing the final eliminations, we achieve our goal:
+
+\vspace{3mm}
+$$
+\left[\begin{array}{cccc|cccc}
+1 & 0 & 0 & 0 & -1 & 2 & -2 & 2 \\
+0 & 1 & 0 & 0 & 1 & -1 & 2 & -2 \\
+0 & 0 & 1 & 0 & 1 & -1 & 1 & -1 \\
+0 & 0 & 0 & 1 & -1 & 0 & -1 & 2 \\
+\end{array}\right]
+$$
+
+\vspace{5mm}
+\fcolorbox{red}{red!10}{\parbox{0.7\textwidth}{\centering
+Success! The left side is $I_4$. \\
+Therefore, the right side is $\mathbf{A^{-1}}$}}
+\end{frame}
+
+\begin{frame}{We Have Found the Inverse!}
+\centering
+We can now read off the inverse matrix from the augmented matrix:
+
+\vspace{5mm}
+$$
+A^{-1} = \begin{bmatrix}
+-1 & 2 & -2 & 2 \\
+1 & -1 & 2 & -2 \\
+1 & -1 & 1 & -1 \\
+-1 & 0 & -1 & 2 \\
+\end{bmatrix}
+$$
+
+\vspace{5mm}
+\begin{block}{Verification}
+We can verify this is correct by checking that $A \cdot A^{-1} = I_4$. Multiplying the original matrix $A$ by this found matrix $A^{-1}$ will indeed yield the identity matrix. Using this, we can find the solution of a system of linear equations.
+\end{block}
+\end{frame}
+
+\begin{frame}{Solving A System of Linear Equations Directly with Gaussian Elimination}
+
+    Consider a system of linear equations as 
+
+    \begin{multiequation}
+        2x_1 + 3x_2 + 5x_3 & = 1\\
+        4x_1 - 2x_2 - 7x_3 & = 8\\
+        9x_1 + 5x_2 - 3x_3 & = 2
+    \end{multiequation}
+    
+    We can write augmented matrix as 
+
+    $$
+\left[\begin{array}{ccc|c}
+2 & 3 & 5 & 1\\
+4 & -2 & -7 & 8\\
+9 & 5 & -3 & 2
+\end{array}\right]
+$$
+
+\end{frame}
+
+\begin{frame}{Step 1: Goal for Column 1}
+\centering
+\textbf{Goal:} Get a pivot of \alert{1} in position (1,1) and zeros below it.
+
+$$
+\left[\begin{array}{ccc|c}
+2 & 3 & 5 & 1\\
+4 & -2 & -7 & 8\\
+9 & 5 & -3 & 2
+\end{array}\right]
+$$
+
+\vspace{5mm}
+\textbf{Strategy:}
+\begin{enumerate}
+    \item First, make the pivot \textbf{1} by scaling Row 1.
+    \item Then, eliminate the entries below it (4 and 9).
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Step 1a: Create the First Pivot}
+\centering
+Scale Row 1 by $\frac{1}{2}$ to get a \alert{1} in position (1,1).
+
+\vspace{3mm}
+\alert{Operation:} $R_1 = \frac{1}{2} R_1$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+4 & -2 & -7 & 8\\
+9 & 5 & -3 & 2
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivot created at position (1,1) = 1}
+\end{frame}
+
+\begin{frame}{Step 1b: Eliminate Below the First Pivot}
+\centering
+Use the new pivot to create \alert{zeros} in the rest of column 1.
+
+\vspace{3mm}
+\alert{Operations:}
+\begin{align*}
+R_2 &= R_2 - 4R_1 \\
+R_3 &= R_3 - 9R_1
+\end{align*}
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & -8 & -17 & 6\\
+0 & -8.5 & -25.5 & -2.5
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivot: position (1,1) = 1} \\
+\colorbox{blue!20}{Zeros created below pivot in column 1}
+\end{frame}
+
+\begin{frame}{Step 2: Goal for Column 2}
+\centering
+\textbf{Goal:} Get a pivot of \alert{1} in position (2,2) and zeros below it.
+
+$$
+\left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & -8 & -17 & 6\\
+0 & -8.5 & -25.5 & -2.5
+\end{array}\right]
+$$
+
+\vspace{5mm}
+\textbf{Strategy:}
+\begin{enumerate}
+    \item First, make the pivot \textbf{1} by scaling Row 2.
+    \item Then, eliminate the entry below it (-8.5).
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Step 2a: Create the Second Pivot}
+\centering
+Scale Row 2 by $-\frac{1}{8}$ to get a \alert{1} in position (2,2).
+
+\vspace{3mm}
+\alert{Operation:} $R_2 = -\frac{1}{8} R_2$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & 1 & 2.125 & -0.75\\
+0 & -8.5 & -25.5 & -2.5
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivots: positions (1,1) = 1 and (2,2) = 1}
+\end{frame}
+
+\begin{frame}{Step 2b: Eliminate Below the Second Pivot}
+\centering
+Use the new pivot to create a \alert{zero} in the rest of column 2.
+
+\vspace{3mm}
+\alert{Operation:}
+$R_3 = R_3 + 8.5R_2$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & 1 & 2.125 & -0.75\\
+0 & 0 & -7.4375 & -8.875
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{Pivots: positions (1,1) and (2,2) = 1} \\
+\colorbox{blue!20}{Zero created below pivot in column 2}
+\end{frame}
+
+\begin{frame}{Step 3: Goal for Column 3 \& Back-Substitution}
+\centering
+\textbf{Goal:} Get a pivot of \alert{1} in position (3,3). The matrix is now in Row Echelon Form (REF). We can then use \alert{back-substitution} to solve.
+
+$$
+\left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & 1 & 2.125 & -0.75\\
+0 & 0 & -7.4375 & -8.875
+\end{array}\right]
+$$
+
+\vspace{5mm}
+\textbf{Strategy:}
+\begin{enumerate}
+    \item Scale Row 3 to get the final pivot.
+    \item Read the simplified system from the REF matrix.
+    \item Solve from the bottom up.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Step 3a: Create the Third Pivot}
+\centering
+Scale Row 3 by $-\frac{1}{7.4375}$ to get a \alert{1} in position (3,3).\\ (Note: $-\frac{1}{7.4375} \approx -0.1345$)
+
+\vspace{3mm}
+\alert{Operation:} $R_3 = -\frac{1}{7.4375} R_3$
+
+\vspace{3mm}
+$$
+\rightarrow \left[\begin{array}{ccc|c}
+1 & 1.5 & 2.5 & 0.5\\
+0 & 1 & 2.125 & -0.75\\
+0 & 0 & 1 & 1.193
+\end{array}\right]
+$$
+
+\vspace{3mm}
+\colorbox{red!20}{All pivots: positions (1,1), (2,2), (3,3) = 1}
+\end{frame}
+
+\begin{frame}{Step 4: Back-Substitution}
+\centering
+The REF matrix corresponds to the simplified system:
+
+\vspace{3mm}
+\begin{align*}
+x_1 + 1.5x_2 + 2.5x_3 &= 0.5 \\
+x_2 + 2.125x_3 &= -0.75 \\
+x_3 &= 1.193
+\end{align*}
+
+\vspace{5mm}
+\textbf{Solve from the bottom up:}
+\begin{enumerate}
+    \item From Eq. 3: \alert{$x_3 = 1.193$}
+    \item Substitute $x_3$ into Eq. 2: $x_2 = -0.75 - 2.125(1.193) \approx -3.285$
+    \item Substitute $x_2, x_3$ into Eq. 1: $x_1 = 0.5 - 1.5(-3.285) - 2.5(1.193) \approx 2.445$
+\end{enumerate}
+
+\vspace{3mm}
+\begin{block}{Solution}
+$\mathbf{x_1 \approx 2.445, \quad x_2 \approx -3.285, \quad x_3 \approx 1.193}$
+\end{block}
+\end{frame}
+
+\begin{frame}{References}
+
+    \begin{enumerate}
+        \item Chapter 2: Linear Algebra, \textit{Mathematics for Machine Learning}, Deisenroth, Faisal \& Ong.
+        \item Chapter 1 Vector Spaces, \textit{Advanced Linear and Matrix Algebra}, Nathaniel Johnston
+        \item Chapter 2 Matrix Decompositions, \textit{Advanced Linear and Matrix Algebra}, Nathaniel Johnston
+    \end{enumerate}
+    
+\end{frame}
+
+
+\section{PyTorch Implementation}
+
+\begin{frame}
+    \sectionpage
+\end{frame}
+
 
 \begin{frame}
     \Huge{\centerline{\color{bubblegumPink}\textbf{The End}}}
