@@ -2495,11 +2495,68 @@ print(f"Solution vector: [{x1}, {x2}, {x3}]")
 \end{minted}
 \end{frame}
 
-\begin{frame}[containsverbatim]{}
+
+
+\begin{frame}[containsverbatim]{Linear Independence Testing}
 \begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+# Example 1: Linearly independent vectors
+print("Example 1: Testing linear independence")
+v1 = torch.tensor([1, 2], dtype=torch.float32)
+v2 = torch.tensor([2, 3], dtype=torch.float32)
+
+# Create matrix with vectors as columns
+vectors_matrix = torch.stack([v1, v2], dim=1)
+print(f"Matrix with vectors as columns: \n{vectors_matrix}")
+
+# Check determinant (for square matrices)
+det_vectors = torch.det(vectors_matrix)
+print(f"Determinant: {det_vectors}")
+print(f"Linearly independent? {abs(det_vectors) > 1e-6}")
 \end{minted}
 \end{frame}
 
+
+\begin{frame}[containsverbatim]{Linear Independence Testing}
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+# Example 2: Linearly dependent vectors
+print("\nExample 2: Linearly dependent vectors")
+v3 = torch.tensor([1, 2], dtype=torch.float32)
+v4 = torch.tensor([2, 4], dtype=torch.float32)  # v4 = 2 * v3
+
+dependent_matrix = torch.stack([v3, v4], dim=1)
+print(f"Matrix with dependent vectors: \n{dependent_matrix}")
+
+det_dependent = torch.det(dependent_matrix)
+print(f"Determinant: {det_dependent}")
+print(f"Linearly independent? {abs(det_dependent) > 1e-6}")
+\end{minted}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Basis and Dimensions}
+\begin{minted}[bgcolor=powderGreen,fontsize=\tiny]{bash}
+# Standard basis for R^3
+print("Standard basis for R^3:")
+e1 = torch.tensor([1, 0, 0], dtype=torch.float32)
+e2 = torch.tensor([0, 1, 0], dtype=torch.float32)
+e3 = torch.tensor([0, 0, 1], dtype=torch.float32)
+
+standard_basis = torch.stack([e1, e2, e3], dim=1)
+print(f"Standard basis matrix: \n{standard_basis}")
+
+# Express a vector in terms of standard basis
+x = torch.tensor([5, 3, -2], dtype=torch.float32)
+print(f"\nVector x = {x}")
+print(f"x = {x[0]}*e1 + {x[1]}*e2 + {x[2]}*e3")
+print(f"x = {x[0]}*{e1} + {x[1]}*{e2} + {x[2]}*{e3}")
+
+# Verify
+reconstructed = x[0]*e1 + x[1]*e2 + x[2]*e3
+print(f"Reconstructed vector: {reconstructed}")
+print(f"Original == Reconstructed? {torch.allclose(x, reconstructed)}")
+
+\end{minted}
+\end{frame}
 
 
 \begin{frame}
