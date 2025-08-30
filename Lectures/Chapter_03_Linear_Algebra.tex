@@ -2202,6 +2202,155 @@ $\mathbf{x_1 \approx 2.445, \quad x_2 \approx -3.285, \quad x_3 \approx 1.193}$
 \end{block}
 \end{frame}
 
+\section{Eigenvalues and Eigenvectors}
+
+\begin{frame}
+    \sectionpage
+\end{frame}
+
+\begin{frame}{Definitions}
+\begin{tblock}{}
+\begin{itemize}
+\item An \alert{eigenvector} of a matrix is a special vector that only gets scaled when the matrix is applied to it
+\item The \alert{eigenvalue} is the scaling factor
+\end{itemize}
+\end{tblock}
+\vspace{5mm}
+\begin{tblock}{Formal Definition}
+For a square matrix $A$ and non-zero vector $\mathbf{v}$
+\begin{multiequation}
+A\mathbf{v} = \lambda\mathbf{v}
+\end{multiequation}
+where $\mathbf{v}$ is an eigenvector and $\lambda$  is the corresponding eigenvalue.
+\end{tblock}
+
+\end{frame}
+
+\begin{frame}{The Eigenvalue Equation}
+
+Starting with the eigenvalue equation:
+\begin{multiequation}
+A\mathbf{v} = \lambda\mathbf{v}
+\end{multiequation}
+
+Rearranging:
+\begin{multiequation}
+A\mathbf{v} - \lambda\mathbf{v} = \mathbf{0}
+\end{multiequation}
+
+Factoring:
+\begin{multiequation}
+(A - \lambda I)\mathbf{v} = \mathbf{0}
+\end{multiequation}
+
+where $I$ is the identity matrix.
+
+\end{frame}
+
+\begin{frame}{Finding Eigenvalues}
+
+For non-trivial solutions ($\mathbf{v} \neq \mathbf{0}$), the matrix $(A - \lambda I)$ must be singular\footnote{A singular matrix is a square matrix that is not invertible, or $det(A) = 0$}:
+
+\begin{multiequation}
+\det(A - \lambda I) = 0
+\end{multiequation}
+
+This gives us the \alert{characteristic polynomial}.
+
+\vspace{5mm}
+
+\begin{tblock}{Properties}
+\begin{itemize}
+    \item Sum of eigenvalues = trace of matrix
+    \item Product of eigenvalues = determinant of matrix
+    \item Eigenvectors with different eigenvalues are linearly independent
+\end{itemize}
+\end{tblock}
+
+\end{frame}
+
+\begin{frame}{Example: 2×2 Matrix}
+
+Consider matrix $A = \begin{bmatrix} 4 & 1 \\ 2 & 3 \end{bmatrix}$
+
+\vspace{3mm}
+
+\begin{columns}
+    \column{0.5\linewidth}
+    Form characteristic equation
+\begin{multiequation}
+\det\begin{bmatrix} 4-\lambda & 1 \\ 2 & 3-\lambda \end{bmatrix} = 0
+\end{multiequation}
+
+\begin{multiequation}
+(4-\lambda)(3-\lambda) - 2 = 0
+\end{multiequation}
+
+\begin{multiequation}
+\lambda^2 - 7\lambda + 10 = 0
+\end{multiequation}
+
+    \column{0.5\linewidth}
+    Solving the quadratic equation:
+    \begin{multiequation}
+    \lambda^2 - 7\lambda + 10 = 0
+    \end{multiequation}
+
+    \begin{multiequation}
+    \lambda = \frac{7 \pm \sqrt{49-40}}{2} = \frac{7 \pm 3}{2}
+    \end{multiequation}
+
+    Therefore: $\lambda_1 = 5$ and $\lambda_2 = 2$
+
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}{Example: Finding Eigenvectors}
+
+For $\lambda_1 = 5$:
+\begin{multiequation}
+(A - 5I)\mathbf{v} = \mathbf{0}
+\end{multiequation}
+
+\begin{multiequation}
+\begin{bmatrix} -1 & 1 \\ 2 & -2 \end{bmatrix}\begin{bmatrix}v_1 \\v_2\end{bmatrix} = \mathbf{0}
+\end{multiequation}
+
+Solution: $v_2 = v_1 \Rightarrow \frac{v_1}{v_2} = 1$. Only their ratio is important.
+
+\vspace{3mm}
+
+For $\lambda_2 = 2$:
+\begin{multiequation}
+\begin{bmatrix} 2 & 1 \\ 2 & 1 \end{bmatrix}\begin{bmatrix}v_1 \\v_2\end{bmatrix} = \mathbf{0}
+\end{multiequation}
+
+Solution: $v_2 = -2v_1$
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Eigenvalue and Eigenvector in Python}
+
+\begin{minted}[bgcolor=powderGreen,fontsize=\footnotesize]{bash}
+import numpy as np
+
+# Define a 2x2 matrix
+A = np.array([[4, 1],
+            [2, 3]])
+
+# Compute eigenvalues and eigenvectors
+eigenvals, eigenvecs = np.linalg.eig(A)
+
+print("Eigenvalues:", eigenvals)
+print("Eigenvectors:")
+print(eigenvecs)
+\end{minted}
+    
+\end{frame}
+
 \begin{frame}{References}
 
     \begin{enumerate}
@@ -2211,6 +2360,9 @@ $\mathbf{x_1 \approx 2.445, \quad x_2 \approx -3.285, \quad x_3 \approx 1.193}$
     \end{enumerate}
     
 \end{frame}
+
+
+
 
 
 \section{PyTorch Implementation}
