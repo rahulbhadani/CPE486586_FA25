@@ -1,0 +1,444 @@
+\documentclass[12pt, xcolor=dvipsnames,svgnames,x11names]{article}
+
+\input{common}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+
+% Redefine \maketitle to include tcolorbox
+\makeatletter
+\renewcommand{\maketitle}{%
+      \begin{center}
+         \begin{tcolorbox}[
+               enhanced,
+               colback=white,
+               colframe=stormblue,
+               boxrule=1pt,
+               arc=3pt,
+               left=0pt,
+               right=0pt,
+               top=0pt,
+               bottom=0pt,
+               drop shadow={goldenrod!25!white},
+         ]
+               % Header section
+               \begin{tcolorbox}[
+                  enhanced,
+                  colback=goldenrod,
+                  colframe=goldenrod,
+                  boxrule=0pt,
+                  arc=3pt,
+                  sharp corners=south,
+                  left=2em,
+                  right=2em,
+                  top=1em,
+                  bottom=1em
+               ]
+                  \centering
+                  {\LARGE\bfseries\textcolor{white}{\@title}}
+               \end{tcolorbox}
+               
+               % Content section
+               \vspace{1em}
+               \centering
+               {\large\textcolor{darkgray}{\@author}} \\[0.8em]
+               {\normalsize\textcolor{darkgray}{\@date}}
+               \vspace{1em}
+         \end{tcolorbox}
+      \end{center}
+      \vspace{2em}
+}
+\makeatother
+
+
+
+\newcommand{\hw}{Probability Density Function Estimation: Theory and Mathematics}
+\newcommand{\duedate}{Sept 14, 2025}
+\newcommand{\hwturnin}{hw01}
+
+\newenvironment{multiequation}[1][]{%
+\begin{equation}%
+   \begin{aligned}%
+   \ifx#1\@empty\else\label{#1}\fi%
+}{%
+   \end{aligned}%
+\end{equation}%
+}
+\pagestyle{fancy}
+
+\lhead{\footnotesize{\coursenumber, \courseterm}, \footnotesize{UAH}}
+\chead{}
+\rhead{\footnotesize{\emph{\hw}}}
+\lfoot{\footnotesize{\instructorname}}
+\cfoot{\footnotesize{\thepage}}
+\rfoot{\footnotesize{\textit{Last Revised:~\today}}}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\newcommand{\minipagewidth}{0.8\columnwidth}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+\onehalfspacing
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+\lhead{Probability Density Function Estimation}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    backgroundcolor=\color{gray!10}
+}
+
+\begin{document}
+
+
+\title{\textsc{\hw\\
+\coursenumber}}
+\author{Instructor: \instructorname}
+\date{\duedate}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction and Problem Formulation}
+
+\subsection{Problem Statement}
+
+Given a time series of room temperature measurements $X_1, X_2, \ldots, X_n$ collected every 5 minutes from 9 AM to 9 PM, we want to estimate the probability density function $f(x)$ that describes the distribution of temperature values.
+
+\subsection{Mathematical Framework}
+
+Let $X$ be a continuous random variable representing room temperature. The probability density function $f(x)$ satisfies:
+\begin{align}
+f(x) &\geq 0 \text{ for all } x \\
+\int_{-\infty}^{\infty} f(x)dx &= 1 \\
+P(a \leq X \leq b) &= \int_a^b f(x)dx
+\end{align}
+
+Our goal is to estimate $f(x)$ from the observed sample $\{x_1, x_2, \ldots, x_n\}$.
+
+\section{Data Structure and Sampling Considerations}
+
+\subsection{Temporal Structure}
+
+With measurements every 5 minutes from 9 AM to 9 PM:
+\begin{itemize}
+\item Time points: $t_i = 9:00 + 5i$ minutes, $i = 0, 1, \ldots, 143$
+\item Daily sample size: $n = 144$ observations
+\item For $k$ days of data: $N = 144k$ total observations
+\end{itemize}
+
+\subsection{Stationarity Assumptions}
+
+The basic PDF estimation assumes that observations are independent and identically distributed (i.i.d.). However, room temperature data may exhibit:
+\begin{itemize}
+\item \textbf{Temporal dependence}: $X(t)$ may be correlated with $X(t-1)$
+\item \textbf{Diurnal patterns}: $f(x|t)$ may vary with time of day
+\item \textbf{Non-stationarity}: Distribution parameters may change over time
+\end{itemize}
+
+\textbf{However, in the most simplest case, we will assume i.i.d.}
+\section{Parametric PDF Estimation}
+
+\subsection{Normal Distribution Model}
+
+If we assume $X \sim N(\mu, \sigma^2)$, the PDF is:
+\begin{equation}
+f(x; \mu, \sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+\end{equation}
+
+\subsubsection{Parameter Estimation using Maximum Likelihood}
+
+The likelihood function for $n$ observations is:
+\begin{equation}
+L(\mu, \sigma^2) = \prod_{i=1}^n f(x_i; \mu, \sigma^2)
+\end{equation}
+
+The log-likelihood is:
+\begin{equation}
+\ell(\mu, \sigma^2) = -\frac{n}{2} \ln(2\pi) - \frac{n}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \mu)^2
+\end{equation}
+
+\textbf{Maximum Likelihood Estimators:}
+\begin{align}
+\hat{\mu} &= \bar{x} = \frac{1}{n} \sum_{i=1}^n x_i \\
+\hat{\sigma}^2 &= \frac{1}{n} \sum_{i=1}^n (x_i - \bar{x})^2
+\end{align}
+
+\subsection{Other Parametric Distributions}
+
+\subsubsection{Beta Distribution (for bounded temperature ranges)}
+\begin{equation}
+f(x; \alpha, \beta) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)} \text{ for } x \in [0,1]
+\end{equation}
+
+After rescaling temperature to $[0,1]$ using: $x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$
+
+\subsubsection{Gamma Distribution (for positive temperatures in Kelvin)}
+\begin{equation}
+f(x; \alpha, \beta) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x} \text{ for } x > 0
+\end{equation}
+
+\subsection{Goodness-of-Fit Testing}
+
+\subsubsection{Kolmogorov-Smirnov Test}
+Test statistic: 
+\begin{equation}
+D_n = \sup_x|F_n(x) - F_0(x)|
+\end{equation}
+
+Where $F_n(x)$ is the empirical CDF and $F_0(x)$ is the theoretical CDF.
+
+\subsubsection{Anderson-Darling Test}
+\begin{equation}
+A  = -n - \sum_{i=1}^n \frac{2i-1}{n}\bigg[ \ln F(x_{(i)}) + \ln \bigg( 1-  F(x_{(n+1-i)}) \bigg) \bigg]
+\end{equation}
+
+Source: \url{https://www.statsref.com/HTML/anderson-darling.html}
+
+\section{Non-Parametric PDF Estimation}
+
+\subsection{Kernel Density Estimation (KDE)}
+
+The kernel density estimator is:
+\begin{equation}
+\hat{f}(x) = \frac{1}{nh} \sum_{i=1}^n K\left(\frac{x - x_i}{h}\right)
+\end{equation}
+
+Where:
+\begin{itemize}
+\item $K(u)$ is the kernel function
+\item $h$ is the bandwidth parameter
+\item $n$ is the sample size
+\end{itemize}
+
+\underline{Source:} Chapter 4, Harrou, Fouzi, Abdelhafid Zeroual, Mohamad Mazen Hittawe, and Ying Sun. Road traffic modeling and management: Using statistical monitoring and deep learning. Elsevier, 2021.
+
+\subsubsection{Common Kernel Functions}
+
+\textbf{Gaussian Kernel:}
+\begin{equation}
+K(u) = \frac{1}{\sqrt{2\pi}} \exp\left(-\frac{u^2}{2}\right)
+\end{equation}
+
+\textbf{Epanechnikov Kernel (optimal):}
+\begin{equation}
+K(u) = \frac{3}{4}(1 - u^2) \text{ for } |u| \leq 1, \text{ } 0 \text{ otherwise}
+\end{equation}
+
+\textbf{Uniform Kernel:}
+\begin{equation}
+K(u) = \frac{1}{2} \text{ for } |u| \leq 1, \text{ } 0 \text{ otherwise}
+\end{equation}
+
+\subsection{Bandwidth Selection}
+
+\subsubsection{Silverman's Rule of Thumb}
+\begin{equation}
+h = 0.9 \times \min(\hat{\sigma}, \text{IQR}/1.34) \times n^{-1/5}
+\end{equation}
+
+Where IQR is the interquartile range.
+
+\subsubsection{Cross-Validation Bandwidth}
+Minimize the integrated squared error:
+\begin{equation}
+\text{ISE}(h) = \int[\hat{f}(x) - f(x)]^2 dx
+\end{equation}
+
+\textbf{Practical Cross-Validation:}
+\begin{equation}
+h^* = \arg\min \sum_{i=1}^n \int[\hat{f}_{-i}(x) - \delta(x - x_i)]^2 dx
+\end{equation}
+
+Where $\hat{f}_{-i}(x)$ is the KDE excluding observation $x_i$.
+
+\subsection{Histogram-Based Estimation}
+
+\subsubsection{Basic Histogram}
+\begin{equation}
+\hat{f}(x) = \frac{n_j}{n \times \Delta x} \text{ for } x \in [x_j, x_{j+1})
+\end{equation}
+
+Where $n_j$ is the count in bin $j$ and $\Delta x$ is the bin width.
+
+\subsubsection{Optimal Bin Width (Sturges' Rule)}
+Number of bins: $k = \lceil 1 + \log_2(n) \rceil$
+
+Bin width: $\Delta x = \frac{x_{\max} - x_{\min}}{k}$
+
+\subsubsection{Freedman-Diaconis Rule}
+\begin{equation}
+\Delta x = 2 \times \text{IQR} \times n^{-1/3}
+\end{equation}
+
+\section{Time-Varying PDF Models}
+
+\subsection{Conditional PDF Estimation}
+
+For non-stationary data, estimate $f(x|t)$:
+
+\subsubsection{Kernel Regression Approach}
+\begin{equation}
+\hat{f}(x|t) = \sum_{i=1}^n w_i(t) K\left(\frac{x - x_i}{h}\right)
+\end{equation}
+
+Where $w_i(t)$ are time-dependent weights:
+\begin{equation}
+w_i(t) = \frac{W\left(\frac{t - t_i}{b}\right)}{\sum_{j=1}^n W\left(\frac{t - t_j}{b}\right)}
+\end{equation}
+
+\subsection{Functional Data Analysis}
+
+Model temperature as a function $T(t)$ and estimate the distribution of functional parameters.
+
+\subsubsection{Fourier Representation}
+\begin{equation}
+T(t) = \mu(t) + \sum_{k=1}^K [a_k\cos(2\pi kt/P) + b_k\sin(2\pi kt/P)] + \varepsilon(t)
+\end{equation}
+
+Where $P = 12$ hours is the period.
+
+\section{Model Selection and Validation}
+
+\subsection{Information Criteria}
+
+\subsubsection{Akaike Information Criterion}
+\begin{equation}
+\text{AIC} = -2\ell(\hat{\theta}) + 2p
+\end{equation}
+
+\subsubsection{Bayesian Information Criterion}
+\begin{equation}
+\text{BIC} = -2\ell(\hat{\theta}) + p \ln(n)
+\end{equation}
+
+Where $p$ is the number of parameters.
+
+\subsection{Cross-Validation}
+
+\subsubsection{K-Fold Cross-Validation}
+\begin{enumerate}
+\item Divide data into $K$ folds
+\item For each fold $k$, estimate $\hat{f}_{-k}(x)$ using remaining data
+\item Evaluate log-likelihood on fold $k$: $\text{LL}_k = \sum_{i \in k} \ln(\hat{f}_{-k}(x_i))$
+\item Average: $\text{CV-LL} = \frac{1}{K} \sum_{k=1}^K \text{LL}_k$
+\end{enumerate}
+
+\subsection{Bootstrap Confidence Intervals}
+
+\subsubsection{Bootstrap Procedure}
+\begin{enumerate}
+\item Resample with replacement: $X^* = \{x_1^*, x_2^*, \ldots, x_n^*\}$
+\item Compute $\hat{f}^*(x)$
+\item Repeat $B$ times
+\item Construct pointwise confidence intervals from bootstrap distribution
+\end{enumerate}
+
+\section{Practical Considerations}
+
+\subsection{Sample Size Requirements}
+
+For reliable PDF estimation:
+\begin{itemize}
+\item Parametric: $n \geq 30$ typically sufficient
+\item Non-parametric KDE: $n \geq 100$ recommended
+\item Complex time-varying models: $n \geq 1000$ may be needed
+\end{itemize}
+
+\subsection{Boundary Effects}
+
+Room temperatures are bounded (e.g., 15-30°C). Use:
+\begin{itemize}
+\item Boundary kernels for KDE
+\item Transformed variables
+\item Reflection methods
+\end{itemize}
+
+\subsection{Computational Complexity}
+\begin{itemize}
+\item Histogram: $O(n)$
+\item KDE: $O(n^2)$ for evaluation at $n$ points
+\item Parametric MLE: $O(n)$ per iteration
+\end{itemize}
+
+\section{Implementation Algorithm}
+
+\subsection{General Workflow}
+
+\begin{lstlisting}[caption=General Workflow for PDF Estimation]
+1. Data Preprocessing:
+   - Remove outliers (|x - median| > 3xMAD)
+   - Check for temporal patterns
+   - Test for stationarity
+
+2. Model Selection:
+   - Fit parametric candidates
+   - Compute non-parametric estimates
+   - Use cross-validation for comparison
+
+3. Parameter Estimation:
+   - If parametric: MLE or method of moments
+   - If KDE: optimize bandwidth
+   - If histogram: optimize bin width
+
+4. Validation:
+   - Goodness-of-fit tests
+   - Cross-validation
+   - Bootstrap confidence intervals
+
+5. Final Estimation:
+   - Select best model
+   - Provide uncertainty quantification
+\end{lstlisting}
+
+\subsection{Error Metrics}
+
+\subsubsection{Mean Integrated Squared Error}
+\begin{equation}
+\text{MISE} = E\left[\int(\hat{f}(x) - f(x))^2 dx\right]
+\end{equation}
+
+\subsubsection{Pointwise Mean Squared Error}
+\begin{equation}
+\text{MSE}(x) = E[(\hat{f}(x) - f(x))^2] = \text{Bias}^2(x) + \text{Variance}(x)
+\end{equation}
+
+
+\end{document}

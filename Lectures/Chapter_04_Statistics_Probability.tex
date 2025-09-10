@@ -660,8 +660,11 @@ apple/.pic={
     $$\mu_k = E[(X - \mu)^k] = \int_{-\infty}^{\infty} (x - \mu)^k f(x) dx$$
     \item First four moments provide crucial distribution information:
     \begin{itemize}
-        \item $\mu_1' = \mu$ (mean)
-        \item $\mu_2 = \sigma^2$ (variance)
+        \item $\mu_1' = \mu$ (mean) $ =  \mu = \frac{\sum_{i=1}^{N} x_i}{N} $
+        \item $\mu_2 = \sigma^2$ (population variance)  $ = \frac{\sum_{i=1}^{N}(x_i - \mu)^2}{N}$\\
+        
+        Sample Variance: $s^2 = \frac{\sum_{i=1}^{n}(x_i - \bar{x})^2}{n-1}$
+
         \item $\mu_3$ relates to skewness
         \item $\mu_4$ relates to kurtosis
     \end{itemize}
@@ -684,23 +687,7 @@ Skewness measures the asymmetry of a probability distribution around its mean.
     $$G_1 = \frac{\sqrt{n(n-1)}}{n-2} \cdot g_1$$
 \end{itemize}
 \end{frame}
-
-\begin{frame}{Skewness: Measuring Asymmetry}
-\begin{block}{Definition}
-Skewness measures the asymmetry of a probability distribution around its mean.
-\end{block}
-
-\begin{itemize}
-    \item \textbf{Population Skewness:}
-    $$\gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{E[(X - \mu)^3]}{\sigma^3}$$
-    
-    \item \textbf{Sample Skewness (Pearson's moment coefficient):}
-    $$g_1 = \frac{m_3}{s^3} = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^3}{s^3}$$
-    
-    \item \textbf{Adjusted Sample Skewness:}
-    $$G_1 = \frac{\sqrt{n(n-1)}}{n-2} \cdot g_1$$
-\end{itemize}
-\end{frame}
+s
 
 % Frame 3: Interpreting Skewness
 \begin{frame}{Interpreting Skewness Values}
@@ -1296,6 +1283,24 @@ Kurtosis measures the "tailedness" and peakedness of a probability distribution.
     \end{center}
     \end{frame}
     
+    \begin{frame}{References}
+
+        \begin{columns}
+            \column{0.5\linewidth}
+            \begin{center}
+        \includegraphics[height=.6\textheight]{figures/stat_computing.jpg}
+        
+        \vspace{1.5pt}
+
+        Chapter 2.
+    \end{center}
+    \column{0.5\linewidth}
+            \begin{center}
+        \includegraphics[height=.6\textheight]{figures/Statistical_inference.jpg}
+    \end{center}
+        \end{columns}
+        
+    \end{frame}
     %------------------------------------------------
     
     \begin{frame}
